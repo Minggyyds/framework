@@ -2,6 +2,7 @@ package consul
 
 import (
 	"fmt"
+	"github.com/google/uuid"
 	capi "github.com/hashicorp/consul/api"
 	"strconv"
 )
@@ -42,7 +43,7 @@ func ServiceRegister(address, port, ip, ConsulPort string) error {
 		return err
 	}
 	return client.Agent().ServiceRegister(&capi.AgentServiceRegistration{
-		ID:      "test",
+		ID:      uuid.NewString(),
 		Name:    "user",
 		Tags:    []string{"GRPC"},
 		Port:    portInt,
