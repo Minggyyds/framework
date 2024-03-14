@@ -31,10 +31,10 @@ import (
 //}
 
 // consul服务注册
-func ServiceRegister(address, port, ip, ConsulPort string) error {
+func ServiceRegister(ip, port, ConsulPort, address string) error {
 	fmt.Println(address, port, ip, ConsulPort)
 	clien := capi.DefaultConfig()
-	clien.Address = fmt.Sprintf("%v,%v", address, ConsulPort)
+	clien.Address = fmt.Sprintf("%v:%v", address, ConsulPort)
 	client, err := capi.NewClient(clien)
 	if err != nil {
 		return err
