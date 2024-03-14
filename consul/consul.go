@@ -34,7 +34,7 @@ import (
 func ServiceRegister(address, port, ip, ConsulPort string) error {
 	clien := capi.DefaultConfig()
 	clien.Address = fmt.Sprintf("%v,%v", address, ConsulPort)
-	client, err := capi.NewClient(capi.DefaultConfig())
+	client, err := capi.NewClient(clien)
 	if err != nil {
 		return err
 	}
