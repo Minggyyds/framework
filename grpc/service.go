@@ -46,16 +46,16 @@ func RegisterGRPC(serviceName string, register func(s *grpc.Server)) error {
 		return err
 	}
 
-	err = consul.ServiceRegister(cof.App.Ip, cof.App.Port, cof.App.ConsulPort, cof.App.Address)
-	if err != nil {
-		return err
-	}
-
 	s := grpc.NewServer()
 	//反射接口支持查询
 	reflection.Register(s)
 	//支持健康检查
 	healthpb.RegisterHealthServer(s, health.NewServer())
+
+	err = consul.ServiceRegister(cof.App.Ip, cof.App.Port, cof.App.ConsulPort, cof.App.Address)
+	if err != nil {
+		return err
+	}
 
 	register(s)
 	log.Printf("server listening at %v", lis.Addr())
