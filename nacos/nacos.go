@@ -7,9 +7,6 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/v2/vo"
 )
 
-const ip = "127.0.0.1"
-const port = 8848
-
 func NacosService() {
 	// 创建clientConfig
 	clientConfig := constant.ClientConfig{
@@ -24,9 +21,9 @@ func NacosService() {
 	// 至少一个ServerConfig
 	serverConfigs := []constant.ServerConfig{
 		{
-			IpAddr:      ip,
+			IpAddr:      "10.2.171.85",
 			ContextPath: "/nacos",
-			Port:        port,
+			Port:        8848,
 			Scheme:      "http",
 		},
 	}
@@ -38,7 +35,7 @@ func NacosService() {
 		},
 	)
 	success, _ := namingClient.RegisterInstance(vo.RegisterInstanceParam{
-		Ip:          "127.0.0.1",
+		Ip:          "10.2.171.85",
 		Port:        8848,
 		ServiceName: "main.go",
 		Weight:      10,

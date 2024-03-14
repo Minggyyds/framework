@@ -3,7 +3,6 @@ package mysql
 import (
 	"fmt"
 	"github.com/Minggyyds/framework/config"
-	"gopkg.in/yaml.v2"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
