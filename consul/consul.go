@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	capi "github.com/hashicorp/consul/api"
-	"net"
+	"strconv"
 )
 
 // consul服务发现
@@ -31,67 +31,67 @@ import (
 //}
 
 // consul服务注册
-// func ServiceRegister(address, port, ip, ConsulPort string) error {
-// clien := capi.DefaultConfig()
-// clien.Address = fmt.Sprintf("%v,%v", address, ConsulPort)
-// client, err := capi.NewClient(clien)
-//
-//	if err != nil {
-//		return err
-//	}
-//
-// portInt, err := strconv.Atoi(port)
-//
-//	if err != nil {
-//		return err
-//	}
-//
-//	return client.Agent().ServiceRegister(&capi.AgentServiceRegistration{
-//		ID:      uuid.NewString(),
-//		Name:    "user",
-//		Tags:    []string{"GRPC"},
-//		Port:    portInt,
-//		Address: address,
-//		Check: &capi.AgentServiceCheck{
-//			GRPC:                           fmt.Sprintf("%v:%v", ip, port),
-//			Interval:                       "5s",
-//			DeregisterCriticalServiceAfter: "10s",
-//		},
-//	})
-//
-//		return nil
-//	}
-func ServiceRegister(nacosGroup, serviceName string, address string, port string) error {
-	config := capi.DefaultConfig()
-	config.Address = "10.2.171.85:8500"
-	client, _ := capi.NewClient(config)
+func ServiceRegister(address, port, ip, ConsulPort string) error {
+	fmt.Println(address, port, ip, ConsulPort)
+	clien := capi.DefaultConfig()
+	clien.Address = fmt.Sprintf("%v,%v", address, ConsulPort)
+	client, err := capi.NewClient(clien)
+	if err != nil {
+		return err
+	}
+
+	portInt, err := strconv.Atoi(port)
+
+	if err != nil {
+		return err
+	}
+
 	return client.Agent().ServiceRegister(&capi.AgentServiceRegistration{
 		ID:      uuid.NewString(),
 		Name:    "user",
 		Tags:    []string{"GRPC"},
-		Port:    8001,
-		Address: GetIp()[0],
+		Port:    portInt,
+		Address: address,
 		Check: &capi.AgentServiceCheck{
-			GRPC:                           fmt.Sprintf("%v:%v", GetIp()[0], "8001"),
+			GRPC:                           fmt.Sprintf("%v:%v", ip, port),
 			Interval:                       "5s",
 			DeregisterCriticalServiceAfter: "10s",
 		},
 	})
+
 }
 
-func GetIp() (ip []string) {
-	addrs, err := net.InterfaceAddrs()
-	if err != nil {
-		return ip
-	}
-	for _, addr := range addrs {
-		ipNet, isVailIpNet := addr.(*net.IPNet)
-		if isVailIpNet && !ipNet.IP.IsLoopback() {
-			if ipNet.IP.To4() != nil {
-				ip = append(ip, ipNet.IP.String())
-			}
-		}
-
-	}
-	return ip
-}
+//func ServiceRegister(nacosGroup, serviceName string, address string, port string) error {
+//	config := capi.DefaultConfig()
+//	config.Address = "10.2.171.85:8500"
+//	client, _ := capi.NewClient(config)
+//	return client.Agent().ServiceRegister(&capi.AgentServiceRegistration{
+//		ID:      uuid.NewString(),
+//		Name:    "user",
+//		Tags:    []string{"GRPC"},
+//		Port:    8001,
+//		Address: GetIp()[0],
+//		Check: &capi.AgentServiceCheck{
+//			GRPC:                           fmt.Sprintf("%v:%v", GetIp()[0], "8001"),
+//			Interval:                       "5s",
+//			DeregisterCriticalServiceAfter: "10s",
+//		},
+//	})
+//}
+//
+//func GetIp() (ip []string) {
+//	addrs, err := net.InterfaceAddrs()
+//	if err != nil {
+//		return ip
+//	}
+//	for _, addr := range addrs {
+//		ipNet, isVailIpNet := addr.(*net.IPNet)
+//		if isVailIpNet && !ipNet.IP.IsLoopback() {
+//			if ipNet.IP.To4() != nil {
+//				ip = append(ip, ipNet.IP.String())
+//			}
+//		}
+//
+//	}
+//	return ip
+//}
