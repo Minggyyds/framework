@@ -22,7 +22,7 @@ type Config struct {
 	} `yaml:"app"`
 }
 
-func getConfig(serviceName string) (*Config, error) {
+func GetConfig(serviceName string) (*Config, error) {
 	configInfo, err := config.GetConfig("DEFAULT_GROUP", serviceName)
 	if err != nil {
 		return nil, err
@@ -36,7 +36,7 @@ func getConfig(serviceName string) (*Config, error) {
 }
 
 func RegisterGRPC(serviceName string, register func(s *grpc.Server)) error {
-	cof, err := getConfig(serviceName)
+	cof, err := GetConfig(serviceName)
 	if err != nil {
 		return err
 	}
