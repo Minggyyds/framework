@@ -8,12 +8,12 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func Client(toService string) (*grpc.ClientConn, error) {
+func Client(dataid, toService string) (*grpc.ClientConn, error) {
 	//cof, err := GetConfig(toService)
 	//if err != nil {
 	//	return nil, err
 	//}
-	conn, err := consul.AgentHealthService(toService)
+	conn, err := consul.AgentHealthService(dataid, toService)
 	if err != nil {
 		return nil, err
 	}

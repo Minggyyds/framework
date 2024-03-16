@@ -2,17 +2,25 @@ package consul
 
 import (
 	"fmt"
+	"github.com/Minggyyds/framework/grpc"
 	"github.com/google/uuid"
 	capi "github.com/hashicorp/consul/api"
 	"strconv"
 )
 
 // consul服务发现
-func AgentHealthService(serviceName string) (string, error) {
+func AgentHealthService(dataid, serviceName string) (string, error) {
 	//return grpc.Dial("consul://10.2.171.70:8500/"+serviceName+"?wait=14s", grpc.WithInsecure(), grpc.WithDefaultServiceConfig(`{"LoadBalancingPolicy": "round_robin"}`))
-
 	fmt.Println("我进到consul发现里面了")
-	client, err := capi.NewClient(capi.DefaultConfig()) //创建consul客户端
+	cof, err := grpc.GetConfig(dataid)
+	if err != nil {
+		return "", err
+	}
+	fmt.Println("我进到consul发现里面了")
+	//fmt.Println(address, port, ip, ConsulPort)
+	clien := capi.DefaultConfig()
+	clien.Address = fmt.Sprintf("%v:%v", cof.App.Address, cof.App.ConsulPort)
+	client, err := capi.NewClient(clien) //创建consul客户端
 	if err != nil {
 		return "", err
 	}
