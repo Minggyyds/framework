@@ -1,11 +1,47 @@
 package consul
 
 import (
+	"context"
 	"fmt"
 	"github.com/google/uuid"
 	capi "github.com/hashicorp/consul/api"
+	_ "github.com/redis/go-redis/v8"
+	"heightFive/homework/day3/redis"
 	"strconv"
+	"time"
 )
+
+func getIndex(ctx context.Context, serviceName string, indexLen int) (int, error) {
+	exist, err := redis.ExistKey(ctx, serviceName, CONSUL_KEY)
+	if err != nil {
+		return 0, err
+	}
+
+	if exist {
+		indexStr, err := redis.GetByKey(ctx, serviceName, CONSUL_KEY)
+		if err != nil {
+			return 0, err
+		}
+		index, err := strconv.Atoi(indexStr)
+		newIndex := index + 1
+
+		if newIndex >= indexLen {
+			newIndex = 0
+		}
+		err = redis.SetKey(ctx, serviceName, CONSUL_KEY, newIndex, time.Duration(0))
+		if err != nil {
+			return 0, err
+		}
+
+		return index, nil
+	}
+
+	err = redis.SetKey(ctx, serviceName, "consul:node:index", 0, time.Duration(0))
+	if err != nil {
+		return 0, err
+	}
+	return 0, nil
+}
 
 // consul服务发现
 func AgentHealthService(dataid, serviceName string) (string, error) {
@@ -24,18 +60,15 @@ func AgentHealthService(dataid, serviceName string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	sr, info, err := client.Agent().AgentHealthServiceByName(serviceName) //健康查询
+	sr, infos, err := client.Agent().AgentHealthServiceByName(serviceName) //健康查询
 	if err != nil {
 		return "", err
 	}
 	if sr != "passing" { //如果健康状态不是 "passing"，则返回一个错误。
 		return "", fmt.Errorf("is not have health service")
 	}
-	for _, v := range info {
-		fmt.Println("consul:", v)
-	}
 	//如果健康状态为 "passing"，则将其中一个健康实例的地址返回。
-	return fmt.Sprintf("%v:%v", info[0].Service.Address, info[0].Service.Port), nil
+	return fmt.Sprintf("%v:%v", infos[index].Service.Address, infos[index].Service.Port), nil
 }
 
 // consul服务注册

@@ -8,7 +8,7 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/v2/vo"
 )
 
-const ip = "10.2.171.85"
+const ip = "10.2.176.44"
 const port = 8848
 
 var client config_client.IConfigClient
