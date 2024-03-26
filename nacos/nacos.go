@@ -21,7 +21,7 @@ func NacosService() {
 	// 至少一个ServerConfig
 	serverConfigs := []constant.ServerConfig{
 		{
-			IpAddr:      "10.2.171.85",
+			IpAddr:      "127.0.0.1",
 			ContextPath: "/nacos",
 			Port:        8848,
 			Scheme:      "http",
@@ -35,7 +35,7 @@ func NacosService() {
 		},
 	)
 	success, _ := namingClient.RegisterInstance(vo.RegisterInstanceParam{
-		Ip:          "10.2.171.85",
+		Ip:          "127.0.0.1",
 		Port:        8848,
 		ServiceName: "main.go",
 		Weight:      10,

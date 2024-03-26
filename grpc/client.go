@@ -1,6 +1,7 @@
 package grpc
 
 import (
+	"context"
 	"fmt"
 	"github.com/Minggyyds/framework/consul"
 	_ "github.com/mbobakov/grpc-consul-resolver"
@@ -8,12 +9,12 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func Client(dataid, toService string) (*grpc.ClientConn, error) {
+func Client(ctx context.Context, toService string) (*grpc.ClientConn, error) {
 	//cof, err := GetConfig(toService)
 	//if err != nil {
 	//	return nil, err
 	//}
-	conn, err := consul.AgentHealthService(dataid, toService)
+	conn, err := consul.AgentHealthService(ctx, toService)
 	if err != nil {
 		return nil, err
 	}

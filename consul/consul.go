@@ -3,13 +3,14 @@ package consul
 import (
 	"context"
 	"fmt"
+	"github.com/Minggyyds/framework/redis"
 	"github.com/google/uuid"
 	capi "github.com/hashicorp/consul/api"
-	_ "github.com/redis/go-redis/v8"
-	"heightFive/homework/day3/redis"
 	"strconv"
 	"time"
 )
+
+const CONSUL_KEY = "consul:node:index"
 
 func getIndex(ctx context.Context, serviceName string, indexLen int) (int, error) {
 	exist, err := redis.ExistKey(ctx, serviceName, CONSUL_KEY)
@@ -44,7 +45,7 @@ func getIndex(ctx context.Context, serviceName string, indexLen int) (int, error
 }
 
 // consul服务发现
-func AgentHealthService(dataid, serviceName string) (string, error) {
+func AgentHealthService(ctx context.Context, serviceName string) (string, error) {
 	//return grpc.Dial("consul://10.2.171.70:8500/"+serviceName+"?wait=14s", grpc.WithInsecure(), grpc.WithDefaultServiceConfig(`{"LoadBalancingPolicy": "round_robin"}`))
 	//fmt.Println("我进到consul发现里面了")
 	//cof, err := grpc.GetConfig(dataid)
@@ -53,9 +54,8 @@ func AgentHealthService(dataid, serviceName string) (string, error) {
 	//}
 	//fmt.Println("我进到consul发现里面了")
 	//fmt.Println(address, port, ip, ConsulPort)
-	fmt.Println(dataid)
 	clien := capi.DefaultConfig()
-	clien.Address = fmt.Sprintf("%v:%v", "10.2.171.85", "8500")
+	clien.Address = fmt.Sprintf("%v:%v", "127.0.0.1", "8500")
 	client, err := capi.NewClient(clien) //创建consul客户端
 	if err != nil {
 		return "", err
@@ -68,6 +68,11 @@ func AgentHealthService(dataid, serviceName string) (string, error) {
 		return "", fmt.Errorf("is not have health service")
 	}
 	//如果健康状态为 "passing"，则将其中一个健康实例的地址返回。
+	index, err := getIndex(ctx, serviceName, len(infos))
+	if err != nil {
+		return "", err
+	}
+
 	return fmt.Sprintf("%v:%v", infos[index].Service.Address, infos[index].Service.Port), nil
 }
 
